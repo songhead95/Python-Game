@@ -28,7 +28,7 @@ class Player:
 
 
 user = Player()
-
+world=[]
 ###############################################################################
  
 i=""
@@ -50,12 +50,13 @@ def render ( array, x, y ):
 
    
 def collide(point, my, mx):
-    global hit
+    global hit, world
     hit = True
     if mapping[point][0]=="$enemy": 
         if(user.strength > random.randint(0, mapping[point][1])):
             print mapping[point][4]
-            world[user.Y+my][user.X+mx]=0
+            pnt = user.X+mx
+            world[user.Y+my]= world[user.Y+my][0:pnt] + '.' + world[user.Y+my][pnt+1:]
         else:
             print mapping[point][3]
             user.health-= mapping[point][2]
@@ -66,17 +67,18 @@ def collide(point, my, mx):
         user.X = mapping[3]
     else:
         if mapping[point][3]==1:
-            world[user.Y+my][user.X+mx]=0
+            pnt = user.X+mx
+            world[user.Y+my]= world[user.Y+my][0:pnt] + '.' + world[user.Y+my][pnt+1:]
         user.health+= mapping[point][1]  
         user.strength += mapping[point][2]
         print mapping[point][0]
  
 def goUp():
-    if(world[user.Y-1][user.X] != 0):
+    if(world[user.Y-1][user.X] != '.'):
         collide(world[user.Y-1][user.X], -1, 0)
     else:
         user.Y-=1
- 
+
 def goDown():
     if(world[user.Y+1][user.X] != '.'):
         collide(world[user.Y+1][user.X], 1, 0)
@@ -84,20 +86,20 @@ def goDown():
         user.Y+=1
  
 def goLeft():
-    if(world[user.Y][user.X-1] != 0):
+    if(world[user.Y][user.X-1] != '.'):
         collide(world[user.Y][user.X-1], 0, -1)
     else:
         user.X-=1
  
 def goRight():
-    if(world[user.Y][user.X+1] != 0):
+    if(world[user.Y][user.X+1] != '.'):
         collide(world[user.Y][user.X+1], 0, 1)
     else:
         user.X+=1
  
-def main():
+def main(wrld):
     global world, hit
-    world = open("maps/world1").read().split("\n")
+    world = open("maps/world" + str(wrld)).read().split("\n")
     os.system("clear")
     print ""
     render(world, user.X, user.Y)
@@ -129,4 +131,4 @@ def main():
 
  
 
-main()
+main(1)
