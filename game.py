@@ -3,7 +3,7 @@ import os
 import random
 
 ################################################################################
-
+starting = True
 MAPFILE="maps/world1.txt"
 walkable = "."
 mapping = {
@@ -17,7 +17,6 @@ mapping = {
     'U':["you drink the strange elixer and feel nearly invincible!", 10000, 10000, 1, 'U'],
     '8': ["$enemy", 200, 15, "The barbarian strikes you and you stagger backwards", "You kill the barbarian"],
     '4': ["$enemy", 1000, 10, "The ferocious beast bites you", "you overpower the ghastly beast"],
-
 }
 
 class Player:
@@ -50,28 +49,29 @@ def render ( array, x, y ):
 
    
 def collide(point, my, mx):
-    global hit, world
-    hit = True
-    if mapping[point][0]=="$enemy": 
-        if(user.strength > random.randint(0, mapping[point][1])):
-            print mapping[point][4]
-            pnt = user.X+mx
-            world[user.Y+my]= world[user.Y+my][0:pnt] + '.' + world[user.Y+my][pnt+1:]
-        else:
-            print mapping[point][3]
-            user.health-= mapping[point][2]
-    elif mapping[point][0]=="$stairs":
-        floor+=mapping[point][1]
-        print theMap[floor]
-        user.Y = mapping[2]
-        user.X = mapping[3]
-    else:
-        if mapping[point][3]==1:
-            pnt = user.X+mx
-            world[user.Y+my]= world[user.Y+my][0:pnt] + '.' + world[user.Y+my][pnt+1:]
-        user.health+= mapping[point][1]  
-        user.strength += mapping[point][2]
-        print mapping[point][0]
+   global hit, world
+   hit = True
+   if ord(point[0]) < 32:
+       main(ord(point[0]))
+   elif mapping[point][0]=="$enemy": 
+       if(user.strength > random.randint(0, mapping[point][1])):
+           print mapping[point][4]
+           pnt = user.X+mx
+           world[user.Y+my]= world[user.Y+my][0:pnt] + '.' + world[user.Y+my][pnt+1:]
+       else:
+           print mapping[point][3]
+           user.health-= mapping[point][2]
+   elif mapping[point][0]=="$stairs":
+       floor+=mapping[point][1]
+       print theMap[floor]
+       user.Y = mapping[2]
+       user.X = mapping[3]
+   elif mapping[point][3]==1:
+           pnt = user.X+mx
+           world[user.Y+my]= world[user.Y+my][0:pnt] + '.' + world[user.Y+my][pnt+1:]
+           user.health+= mapping[point][1]  
+           user.strength += mapping[point][2]
+           print mapping[point][0]
  
 def goUp():
     if(world[user.Y-1][user.X] != '.'):
@@ -98,16 +98,18 @@ def goRight():
         user.X+=1
  
 def main(wrld):
-    global world, hit
+    global world, hit, starting
     world = open("maps/world" + str(wrld)).read().split("\n")
     os.system("clear")
     print ""
-    render(world, user.X, user.Y)
-    print ' ' * ((len(world[1])/2)-4) + "WELCOME TO"
-    print ' ' * ((len(world[1])/2)-1) + "BARF"
-    i = " "
-    sys.stdout.write("What is your name? > ")
-    user.name = raw_input()
+    if(starting):
+        render(world, user.X, user.Y)
+        print ' ' * ((len(world[1])/2)-4) + "WELCOME TO"
+        print ' ' * ((len(world[1])/2)-1) + "BARF"
+        i = " "
+        sys.stdout.write("What is your name? > ")
+        user.name = raw_input()
+    starting = False
     while not i in ["quit", "q", "exit"]:
         hit = False
         sys.stdout.write(user.name + "> ")
