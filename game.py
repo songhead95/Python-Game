@@ -30,7 +30,7 @@ user = Player()
 world=[]
 ###############################################################################
  
-i=""
+
 hit = False
 copy2d = lambda matrix: [[i for i in l] for l in matrix]
 
@@ -61,17 +61,15 @@ def collide(point, my, mx):
        else:
            print mapping[point][3]
            user.health-= mapping[point][2]
-   elif mapping[point][0]=="$stairs":
-       floor+=mapping[point][1]
-       print theMap[floor]
-       user.Y = mapping[2]
-       user.X = mapping[3]
    elif mapping[point][3]==1:
            pnt = user.X+mx
            world[user.Y+my]= world[user.Y+my][0:pnt] + '.' + world[user.Y+my][pnt+1:]
            user.health+= mapping[point][1]  
            user.strength += mapping[point][2]
            print mapping[point][0]
+   else:
+       print mapping[point][0]
+       user.health += mapping[point][1]
  
 def goUp():
     if(world[user.Y-1][user.X] != '.'):
@@ -98,6 +96,7 @@ def goRight():
         user.X+=1
  
 def main(wrld):
+    i=""
     global world, hit, starting
     world = open("maps/world" + str(wrld)).read().split("\n")
     os.system("clear")
